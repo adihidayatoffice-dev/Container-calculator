@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Container Calc — Adi Hidayat</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #f2f2f7;
+  --card: #ffffff;
+  --card2: #f2f2f7;
+  --label: #8e8e93;
+  --text: #1c1c1e;
+  --text2: #3a3a3c;
+  --blue: #007aff;
+  --blue-d: #0063cc;
+  --green: #34c759;
+  --red: #ff3b30;
+  --orange: #ff9500;
+  --sep: rgba(60,60,67,0.12);
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --radius: 12px;
+  --radius-lg: 18px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* HEADER */
+.app-header {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 0.5px solid var(--sep);
+  padding: 14px 20px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-header-title { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; color: var(--text); }
+.app-header-sub { font-size: 12px; color: var(--label); margin-top: 1px; letter-spacing: 0.1px; }
+
+.wrap { max-width: 960px; margin: 0 auto; padding: 16px 14px 40px; }
+
+/* CARD */
+.card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.card-section {
+  padding: 14px 16px;
+  border-bottom: 0.5px solid var(--sep);
+}
+.card-section:last-child { border-bottom: none; }
+
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--label);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+}
+
+/* FORM ROWS */
+.form-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.form-row:last-child { margin-bottom: 0; }
+
+input[type="text"], input[type="number"], select {
+  flex: 1;
+  min-width: 64px;
+  height: 38px;
+  padding: 0 12px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--card2);
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background 0.15s;
+}
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+  background: #e9e9ef;
+}
+
+/* TOGGLE SWITCH */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  border-bottom: 0.5px solid var(--sep);
+  padding: 0 16px;
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle-label { font-size: 16px; font-weight: 400; color: var(--text); }
+.toggle-sub { font-size: 13px; color: var(--label); margin-top: 1px; }
+
+/* iOS toggle switch */
+.ios-switch { position: relative; width: 51px; height: 31px; flex-shrink: 0; }
+.ios-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.ios-switch-track {
+  position: absolute; inset: 0;
+  background: #e5e5ea;
+  border-radius: 31px;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.ios-switch input:checked + .ios-switch-track { background: var(--green); }
+.ios-switch-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 27px; height: 27px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+}
+.ios-switch input:checked ~ .ios-switch-thumb { transform: translateX(20px); }
+
+/* RADIO SEGMENT */
+.seg-ctrl {
+  display: flex;
+  background: var(--card2);
+  border-radius: 10px;
+  padding: 2px;
+  gap: 2px;
+}
+.seg-btn {
+  flex: 1;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--label);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.seg-btn.active {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+/* BUTTONS */
+.btn {
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn:active { transform: scale(0.97); opacity: 0.85; }
+.btn-blue { background: var(--blue); color: #fff; }
+.btn-green { background: var(--green); color: #fff; }
+.btn-red { background: var(--red); color: #fff; }
+.btn-gray { background: var(--card2); color: var(--blue); }
+.btn-sm {
+  height: 30px; padding: 0 12px;
+  font-size: 14px; font-weight: 600;
+  border-radius: 8px;
+}
+.btn-row { display: flex; gap: 8px; padding: 14px 16px; flex-wrap: wrap; }
+.btn-row .btn { flex: 1; min-width: 80px; }
+
+/* CARGO ITEM */
+.cargo-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 16px;
+  border-bottom: 0.5px solid var(--sep);
+  gap: 12px;
+}
+.cargo-item:last-child { border-bottom: none; }
+.cargo-info { font-size: 14px; color: var(--text); line-height: 1.45; }
+.cargo-meta { font-size: 12px; color: var(--label); margin-top: 2px; }
+.pill {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: 4px;
+}
+.pill-blue { background: #e0f0ff; color: var(--blue-d); }
+.pill-orange { background: #fff0e0; color: #c75000; }
+
+/* METRICS */
+.metrics-row {
+  display: flex; gap: 0;
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.metric {
+  flex: 1;
+  padding: 14px 16px;
+  border-right: 0.5px solid var(--sep);
+  text-align: center;
+}
+.metric:last-child { border-right: none; }
+.metric-val { font-size: 22px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
+.metric-lbl { font-size: 12px; color: var(--label); margin-top: 2px; }
+
+/* CONTAINER CARD */
+.cont-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.cont-hdr {
+  padding: 12px 16px;
+  background: var(--blue);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  gap: 10px; flex-wrap: wrap;
+}
+.cont-hdr-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.cont-name-in {
+  background: rgba(255,255,255,0.18);
+  border: 0.5px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 15px; font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 8px;
+  outline: none;
+  width: 140px;
+}
+.cont-name-in::placeholder { color: rgba(255,255,255,0.5); }
+.cont-name-in:focus { border-color: rgba(255,255,255,0.8); }
+.cont-hdr-right { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cont-dim-in {
+  width: 62px; height: 30px;
+  padding: 0 8px;
+  font-family: var(--font);
+  font-size: 13px; font-weight: 500;
+  background: rgba(255,255,255,0.18);
+  border: 0.5px solid rgba(255,255,255,0.4);
+  border-radius: 7px;
+  color: #fff;
+  outline: none;
+  -webkit-appearance: none;
+  text-align: center;
+}
+.cont-dim-in:focus { border-color: rgba(255,255,255,0.8); }
+.cont-dim-label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 500; }
+.cont-apply-btn {
+  height: 30px; padding: 0 12px;
+  background: rgba(255,255,255,0.22);
+  border: 0.5px solid rgba(255,255,255,0.5);
+  color: #fff;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cont-apply-btn:active { background: rgba(255,255,255,0.35); }
+
+canvas { width: 100%; display: block; }
+
+.view-toggle-row {
+  display: flex; align-items: center;
+  padding: 8px 12px; gap: 6px;
+  border-bottom: 0.5px solid var(--sep);
+}
+.view-tab {
+  padding: 4px 12px; border-radius: 7px;
+  font-size: 13px; font-weight: 600;
+  border: none; background: transparent;
+  color: var(--label); cursor: pointer;
+  transition: all 0.15s;
+}
+.view-tab.active { background: var(--blue); color: #fff; }
+
+.cargo-list-sect { padding: 14px 16px; }
+.cargo-list-title { font-size: 13px; font-weight: 600; color: var(--label); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.cargo-list-item { font-size: 14px; color: var(--text); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+.cargo-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* MODAL */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.modal-bg.show { display: flex; }
+.modal-sheet {
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 520px;
+  padding: 24px 24px 32px;
+  animation: slideUp 0.28s cubic-bezier(0.32,0.72,0,1);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-icon { font-size: 36px; text-align: center; margin-bottom: 10px; }
+.modal-title { font-size: 18px; font-weight: 600; text-align: center; color: var(--red); margin-bottom: 8px; }
+.modal-msg { font-size: 14px; color: var(--text2); text-align: center; line-height: 1.6; margin-bottom: 20px; }
+.modal-btn { width: 100%; height: 50px; border-radius: 14px; background: var(--blue); color: #fff; font-family: var(--font); font-size: 16px; font-weight: 600; border: none; cursor: pointer; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 30px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(50,50,52,0.92);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-size: 14px; font-weight: 500;
+  z-index: 9999;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* PRINT — PDF */
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: #fff; }
+  .app-header, #controls, .modal-bg, .toast, .view-toggle-row, .cont-apply-btn, .cont-name-in, .cont-dim-in, .cont-dim-label { display: none !important; }
+  .wrap { padding: 0; }
+  .cont-card { break-inside: avoid; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 12px; }
+  .cont-hdr { background: #1a5fad !important; -webkit-print-color-adjust: exact; }
+  canvas { max-height: 300px; }
+  .pdf-wm {
+    display: block !important;
+    position: fixed; bottom: 20px; right: 24px;
+    font-family: var(--font);
+    font-size: 11px; font-weight: 500;
+    color: rgba(0,0,0,0.28);
+    letter-spacing: 0.08em;
+  }
+}
+
+.pdf-wm { display: none; }
+
+@media (max-width: 600px) {
+  .form-row { flex-direction: column; }
+  input[type="text"], input[type="number"], select { width: 100%; }
+  .cont-hdr { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="pdf-wm">APP by Adi Hidayat · LCL Container Calculator</div>
+
+<div class="app-header">
+  <div class="app-header-title">Container Calculator</div>
+  <div class="app-header-sub">APP by Adi Hidayat</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal-sheet">
+    <div class="modal-icon">🚫</div>
+    <div class="modal-title" id="modalTitle">Kargo Tidak Muat</div>
+    <div class="modal-msg" id="modalMsg"></div>
+    <button class="modal-btn" onclick="closeModal()">OK, Mengerti</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="wrap" id="controls">
+
+  <!-- DEFAULT SIZE -->
+  <div class="card">
+    <div class="card-section">
+      <div class="section-label">Default Container</div>
+      <div class="form-row">
+        <select id="containerType" onchange="onPresetChange()">
+          <option value="40">40HC — 235 × 1185 × 269 cm</option>
+          <option value="20">20GP — 235 × 580 × 239 cm</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <input type="number" id="cWid" placeholder="W (lebar)" value="235">
+        <input type="number" id="cLen" placeholder="L (panjang)" value="1185">
+        <input type="number" id="cHei" placeholder="H (tinggi)" value="269">
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING MODE -->
+  <div class="card">
+    <div class="card-section">
+      <div class="section-label">Loading Mode</div>
+      <div class="seg-ctrl" id="modeCtrl">
+        <button class="seg-btn active" onclick="setMode('stack',this)">📦 Stacking (3D)</button>
+        <button class="seg-btn" onclick="setMode('noStack',this)">🗂 No Stack (2D)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD CARGO -->
+  <div class="card">
+    <div class="card-section">
+      <div class="section-label">Add Cargo</div>
+      <div class="form-row">
+        <select id="targetContainer" style="background:#e6f4ea;color:#1a6e31;font-weight:600;">
+          <option value="0">Container 1</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <input type="text" id="customerName" placeholder="Customer">
+        <input type="text" id="cargoName" placeholder="Cargo Name">
+      </div>
+      <div class="form-row">
+        <input type="number" id="cargoW" placeholder="W / Lebar">
+        <input type="number" id="cargoL" placeholder="L / Panjang">
+        <input type="number" id="cargoH" placeholder="H / Tinggi">
+        <input type="number" id="cargoQ" placeholder="Qty" value="1">
+      </div>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Auto Rotate to Fit</div>
+        <div class="toggle-sub">Putar kargo agar muat di lebar container</div>
+      </div>
+      <label class="ios-switch">
+        <input type="checkbox" id="autoRotate" checked>
+        <div class="ios-switch-track"></div>
+        <div class="ios-switch-thumb"></div>
+      </label>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green" onclick="addCargo()">+ Add Cargo</button>
+    </div>
+    <div id="cargoList"></div>
+  </div>
+
+  <!-- METRICS + ACTIONS -->
+  <div class="metrics-row" id="metricsRow">
+    <div class="metric"><div class="metric-val" id="mContainers">0</div><div class="metric-lbl">Containers</div></div>
+    <div class="metric"><div class="metric-val" id="mVolume">0.00</div><div class="metric-lbl">CBM Total</div></div>
+  </div>
+  <div class="card">
+    <div class="btn-row">
+      <button class="btn btn-gray" onclick="addManualContainer()">+ Container</button>
+      <button class="btn btn-gray" onclick="saveData()">💾 Save</button>
+      <button class="btn btn-blue" onclick="exportPDF()">🖨 PDF</button>
+      <button class="btn btn-red" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+</div><!-- /controls -->
+
+<div class="wrap">
+  <div id="renderArea"></div>
+</div>
+
+<script>
+const COLORS=['#007aff','#34c759','#ff3b30','#af52de','#ff9500','#00c7be','#ff6b35','#c93585','#30b0c7','#5856d6'];
+let cargos=[], custColors={}, manualContainers=1, contMeta={}, contView={}, loadMode='stack';
+
+// ==================== HELPERS ====================
+function defSize(){return{w:+document.getElementById('cWid').value||235,l:+document.getElementById('cLen').value||1185,h:+document.getElementById('cHei').value||269};}
+function contSize(cid){const m=contMeta[cid]||{},d=defSize();return{w:m.w||d.w,l:m.l||d.l,h:m.h||d.h};}
+function contName(cid){return(contMeta[cid]||{}).name||`Container ${cid+1}`;}
+function getColor(cust){const k=cust||'?';if(!custColors[k])custColors[k]=COLORS[Object.keys(custColors).length%COLORS.length];return custColors[k];}
+
+function setMode(mode,btn){
+  loadMode=mode;
+  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  draw();
+}
+
+function onPresetChange(){
+  const t=document.getElementById('containerType').value;
+  if(t==='40'){document.getElementById('cWid').value=235;document.getElementById('cLen').value=1185;document.getElementById('cHei').value=269;}
+  else{document.getElementById('cWid').value=235;document.getElementById('cLen').value=580;document.getElementById('cHei').value=239;}
+  draw();
+}
+
+// ==================== MODAL / TOAST ====================
+function showModal(title,msg){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalMsg').innerHTML=msg;
+  document.getElementById('modalBg').classList.add('show');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('show');}
+document.getElementById('modalBg').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ==================== ADD CARGO ====================
+function addCargo(){
+  const W=+document.getElementById('cargoW').value;
+  const L=+document.getElementById('cargoL').value;
+  const H=+document.getElementById('cargoH').value||0;
+  const Q=+document.getElementById('cargoQ').value||1;
+  const cid=parseInt(document.getElementById('targetContainer').value)||0;
+  const rotate=document.getElementById('autoRotate').checked;
+
+  if(!W||!L){showModal('Input Tidak Lengkap','Width (W) dan Length (L) harus diisi.');return;}
+
+  const cs=contSize(cid);
+  // Check footprint fits (with rotation)
+  const fitN=W<=cs.w&&L<=cs.l;
+  const fitR=L<=cs.w&&W<=cs.l;
+  if(!fitN&&!fitR){
+    showModal('Kargo Tidak Muat 🚫',
+      `Kargo <b>${document.getElementById('cargoName').value||'Items'}</b> ukuran <b>${W}×${L} cm</b> tidak muat di <b>${contName(cid)}</b> (${cs.w}×${cs.l} cm W×L).<br><br>Kecilkan kargo atau pilih container lebih besar.`);
+    return;
+  }
+  // Check height
+  if(H>0&&H>cs.h){
+    showModal('Tinggi Melebihi Container 🚫',
+      `Tinggi kargo <b>${H} cm</b> melebihi tinggi <b>${contName(cid)}</b> yaitu <b>${cs.h} cm</b>.<br><br>Kurangi tinggi kargo atau gunakan container lebih tinggi.`);
+    return;
+  }
+
+  cargos.push({customer:document.getElementById('customerName').value||'N/A',name:document.getElementById('cargoName').value||'Cargo',w:W,l:L,h:H,q:Q,cid,rotate,color:getColor(document.getElementById('customerName').value)});
+  renderList();draw();
+}
+
+function renderList(){
+  const el=document.getElementById('cargoList');
+  if(!cargos.length){el.innerHTML='';return;}
+  el.innerHTML=cargos.map((c,i)=>`
+    <div class="cargo-item">
+      <div>
+        <div class="cargo-info"><span style="color:${c.color};font-weight:600;">${c.customer}</span> · ${c.name}${c.rotate?'<span class="pill pill-orange">↔ rotate</span>':''}</div>
+        <div class="cargo-meta">${c.w}×${c.l}${c.h?'×'+c.h:''} cm &nbsp;·&nbsp; ×${c.q} pcs &nbsp;·&nbsp; Cont ${c.cid+1}</div>
+      </div>
+      <button class="btn btn-red btn-sm" onclick="removeCargo(${i})">✕</button>
+    </div>`).join('');
+}
+function removeCargo(i){cargos.splice(i,1);renderList();draw();}
+
+// ==================== CONTAINERS ====================
+function addManualContainer(){manualContainers++;updateSel();draw();}
+function updateSel(){
+  const sel=document.getElementById('targetContainer');
+  const cur=parseInt(sel.value)||0;
+  sel.innerHTML='';
+  for(let i=0;i<manualContainers;i++) sel.innerHTML+=`<option value="${i}">${contName(i)}</option>`;
+  if(cur<manualContainers) sel.value=cur;
+}
+
+function applyName(cid){
+  const inp=document.getElementById(`cn_${cid}`);
+  if(!inp)return;
+  if(!contMeta[cid])contMeta[cid]={};
+  contMeta[cid].name=inp.value||`Container ${cid+1}`;
+  updateSel();
+}
+
+function applySize(cid){
+  const wIn=document.getElementById(`cw_${cid}`);
+  const lIn=document.getElementById(`cl_${cid}`);
+  const hIn=document.getElementById(`ch_${cid}`);
+  if(!wIn||!lIn||!hIn)return;
+  const nw=+wIn.value,nl=+lIn.value,nh=+hIn.value;
+  if(!nw||!nl||!nh){showModal('Ukuran Tidak Valid','Width, Length, dan Height harus > 0.');return;}
+  for(const c of cargos.filter(c=>c.cid===cid)){
+    if(!((c.w<=nw&&c.l<=nl)||(c.l<=nw&&c.w<=nl))){
+      showModal('Container Tidak Bisa Dikecilkan 🚫',`Kargo <b>${c.name}</b> (${c.w}×${c.l}) tidak muat di ${nw}×${nl} cm.<br>Hapus kargo tersebut dulu.`);
+      const cs=contSize(cid);wIn.value=cs.w;lIn.value=cs.l;hIn.value=cs.h;return;
+    }
+    if(c.h>0&&c.h>nh){
+      showModal('Tinggi Tidak Cukup 🚫',`Kargo <b>${c.name}</b> (H:${c.h}) tidak muat di H baru ${nh} cm.`);
+      const cs=contSize(cid);wIn.value=cs.w;lIn.value=cs.l;hIn.value=cs.h;return;
+    }
+  }
+  if(!contMeta[cid])contMeta[cid]={};
+  contMeta[cid].w=nw;contMeta[cid].l=nl;contMeta[cid].h=nh;
+  draw();
+}
+
+// ==================== PACKING ====================
+/*
+  FIX: Rotation logic — try BOTH orientations for EVERY item including the first,
+  choose best fit: prefer orientation that fits current row without starting new row,
+  otherwise pick orientation that requires least new-row waste.
+  
+  If autoRotate ON → try both orientations
+  If autoRotate OFF → only try original
+*/
+function packItem(c, cW, cL, x, y, rowH){
+  const orients=[];
+  // Always try original orientation
+  orients.push({iW:c.w,iL:c.l,rot:false});
+  // Try rotated only if autoRotate and dimensions differ
+  if(c.rotate && c.w!==c.l) orients.push({iW:c.l,iL:c.w,rot:true});
+
+  // Pass 1: can it fit in current row without new row?
+  for(const o of orients){
+    if(o.iW>cW) continue; // can't fit width of container at all
+    if(y+o.iW<=cW){
+      // fits current row
+      return{x,y,iL:o.iL,iW:o.iW,rot:o.rot,nx:x,ny:y+o.iW,nrH:Math.max(rowH,o.iL),overflow:false};
+    }
+  }
+  // Pass 2: start new row
+  for(const o of orients){
+    if(o.iW>cW) continue;
+    const nx=x+rowH;
+    if(nx+o.iL<=cL){
+      return{x:nx,y:0,iL:o.iL,iW:o.iW,rot:o.rot,nx,ny:o.iW,nrH:o.iL,overflow:false};
+    }
+  }
+  return null;
+}
+
+function packAll(){
+  let boxes=Array.from({length:manualContainers},()=>[]);
+  cargos.forEach(c=>{for(let i=0;i<c.q;i++) boxes[c.cid<boxes.length?c.cid:0].push({...c});});
+
+  let result=[];
+  for(let i=0;i<boxes.length;i++){
+    const{w:cW,l:cL}=contSize(i);
+    let used=[],remain=[],x=0,y=0,rowH=0;
+    boxes[i].forEach(c=>{
+      const r=packItem(c,cW,cL,x,y,rowH);
+      if(r){
+        used.push({...c,px:r.x,py:r.y,pl:r.iL,pw:r.iW,rotated:r.rot});
+        x=r.nx;y=r.ny;rowH=r.nrH;
+      } else remain.push(c);
+    });
+    result.push(used);
+    if(remain.length){
+      if(i+1>=boxes.length){boxes.push([]);manualContainers=boxes.length;}
+      boxes[i+1].unshift(...remain);
+    }
+  }
+  return result;
+}
+
+// ==================== DRAW ====================
+function draw(){
+  const area=document.getElementById('renderArea');area.innerHTML='';
+  const containers=packAll();updateSel();
+  const defH=+document.getElementById('cHei').value;
+  const totalVol=cargos.reduce((s,c)=>s+(c.l*c.w*(c.h||defH)*c.q)/1e6,0);
+  document.getElementById('mContainers').textContent=containers.length;
+  document.getElementById('mVolume').textContent=totalVol.toFixed(2);
+
+  containers.forEach((cont,i)=>{
+    const{w:cW,l:cL,h:cH}=contSize(i);
+    const vm=contView[i]||(loadMode==='stack'?'3d':'2d');
+    const cs=contSize(i); const nm=contName(i);
+
+    const card=document.createElement('div');card.className='cont-card';
+
+    // Header
+    const hdr=document.createElement('div');hdr.className='cont-hdr';
+    hdr.innerHTML=`
+      <div class="cont-hdr-left">
+        <span style="color:#fff;font-weight:700;font-size:15px;">${nm}</span>
+        <input class="cont-name-in" id="cn_${i}" value="${nm}" placeholder="Rename" onchange="applyName(${i})">
+      </div>
+      <div class="cont-hdr-right">
+        <span class="cont-dim-label">W</span>
+        <input class="cont-dim-in" id="cw_${i}" type="number" value="${cs.w}">
+        <span class="cont-dim-label">L</span>
+        <input class="cont-dim-in" id="cl_${i}" type="number" value="${cs.l}">
+        <span class="cont-dim-label">H</span>
+        <input class="cont-dim-in" id="ch_${i}" type="number" value="${cs.h}">
+        <button class="cont-apply-btn" onclick="applySize(${i})">Apply</button>
+      </div>`;
+    card.appendChild(hdr);
+
+    // View toggle
+    const vtRow=document.createElement('div');vtRow.className='view-toggle-row';
+    vtRow.innerHTML=`
+      <span style="font-size:13px;color:var(--label);flex:1;">View:</span>
+      <button class="view-tab ${vm==='2d'?'active':''}" onclick="setContView(${i},'2d')">2D Top</button>
+      <button class="view-tab ${vm==='3d'?'active':''}" onclick="setContView(${i},'3d')">3D Iso</button>`;
+    card.appendChild(vtRow);
+
+    // Canvas
+    const cv=document.createElement('canvas');cv.id=`cv_${i}`;
+    card.appendChild(cv);
+
+    // Cargo list
+    const lst=document.createElement('div');lst.className='cargo-list-sect';
+    let counts={};
+    cont.forEach(p=>{const k=`${p.customer}|${p.name}|${p.w}|${p.l}`;if(!counts[k])counts[k]={...p,qty:0};counts[k].qty++;});
+    lst.innerHTML=`<div class="cargo-list-title">${nm}</div>`+
+      Object.values(counts).map(it=>`
+        <div class="cargo-list-item">
+          <div class="cargo-dot" style="background:${it.color}"></div>
+          <span><b>${it.customer}</b> · ${it.name} (${it.w}×${it.l}${it.h?'×'+it.h:''}) : <b>${it.qty} pcs</b>${it.rotated?'<span class="pill pill-orange">↔</span>':''}</span>
+        </div>`).join('')||`<div style="color:var(--label);font-size:14px;">Kosong</div>`;
+    card.appendChild(lst);
+    area.appendChild(card);
+
+    if(vm==='3d') draw3D(i,cont,cW,cL,cH);
+    else draw2D(i,cont,cW,cL);
+  });
+}
+
+function setContView(cid,m){contView[cid]=m;draw();}
+
+// ==================== 2D DRAW (FIXED) ====================
+/*
+  FIX #2: 
+  - Used Length line: draw from container start to rightmost cargo edge
+  - Remain line: draw from rightmost cargo edge to container end
+  - Both lines at bottom of container, clearly separated
+  - Width indicator on left shows actual used width (max y extent)
+*/
+function draw2D(cid,cont,cW,cL){
+  const cv=document.getElementById(`cv_${cid}`);if(!cv)return;
+  const PW=1200, PH=380;
+  cv.width=PW;cv.height=PH;cv.style.width='100%';cv.style.background='#ffffff';
+  const ctx=cv.getContext('2d');
+
+  const scale=Math.min(1050/cL, 260/cW);
+  const sX=88, sY=28;
+  const boxW=cL*scale, boxH=cW*scale;
+
+  // Container fill
+  ctx.fillStyle='#f9f9fb';
+  ctx.fillRect(sX,sY,boxW,boxH);
+
+  // Container border
+  ctx.strokeStyle='#007aff';ctx.lineWidth=2.5;
+  ctx.strokeRect(sX,sY,boxW,boxH);
+
+  // Internal grid lines (subtle)
+  ctx.strokeStyle='rgba(0,122,255,0.08)';ctx.lineWidth=1;
+  for(let lx=sX+scale*100;lx<sX+boxW;lx+=scale*100){
+    ctx.beginPath();ctx.moveTo(lx,sY);ctx.lineTo(lx,sY+boxH);ctx.stroke();
+  }
+
+  let maxPL=0, maxPW=0; // max used length & width
+  cont.forEach(p=>{
+    maxPL=Math.max(maxPL,p.px+p.pl);
+    maxPW=Math.max(maxPW,p.py+p.pw);
+  });
+
+  // Draw cargo boxes
+  cont.forEach(p=>{
+    const px=sX+p.px*scale, py=sY+p.py*scale;
+    const pw=p.pl*scale, ph=p.pw*scale;
+    ctx.fillStyle=p.color;ctx.fillRect(px,py,pw,ph);
+    ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=1.2;
+    ctx.strokeRect(px,py,pw,ph);
+    ctx.fillStyle='#fff';
+    ctx.font=`bold ${Math.min(11,pw/4)}px Inter,sans-serif`;
+    ctx.textAlign='left';
+    const label=`${p.pw}×${p.pl}${p.rotated?' ↔':''}`;
+    if(pw>30&&ph>14) ctx.fillText(label,px+5,py+14);
+    if(pw>50&&ph>28&&p.customer!=='N/A') ctx.fillText(p.customer.slice(0,9),px+5,py+27);
+  });
+
+  // ---- INDICATORS ----
+  const baseY=sY+boxH; // bottom of container
+  const indY1=baseY+22; // line for "Used L"
+  const indY2=baseY+44; // line for "Remain L"
+  const usedLpx=sX+maxPL*scale;
+  const endPx=sX+boxW;
+
+  // ---- Used Length indicator ----
+  ctx.strokeStyle='#007aff';ctx.lineWidth=2;
+  // horizontal line: start → used edge
+  ctx.beginPath();ctx.moveTo(sX,indY1);ctx.lineTo(usedLpx,indY1);ctx.stroke();
+  // tick marks at start
+  ctx.beginPath();ctx.moveTo(sX,indY1-5);ctx.lineTo(sX,indY1+5);ctx.stroke();
+  // tick at used edge
+  ctx.beginPath();ctx.moveTo(usedLpx,indY1-5);ctx.lineTo(usedLpx,indY1+5);ctx.stroke();
+  ctx.fillStyle='#007aff';ctx.font='bold 11px Inter,sans-serif';ctx.textAlign='center';
+  ctx.fillText(`Used L: ${maxPL.toFixed(0)} cm`,sX+(usedLpx-sX)/2,indY1-8);
+
+  // ---- Remain Length indicator (only if there's remaining space) ----
+  if(maxPL<cL){
+    ctx.strokeStyle='#ff3b30';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(usedLpx,indY2);ctx.lineTo(endPx,indY2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(usedLpx,indY2-5);ctx.lineTo(usedLpx,indY2+5);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(endPx,indY2-5);ctx.lineTo(endPx,indY2+5);ctx.stroke();
+    ctx.fillStyle='#ff3b30';ctx.textAlign='center';
+    ctx.fillText(`Remain: ${(cL-maxPL).toFixed(0)} cm`,usedLpx+(endPx-usedLpx)/2,indY2-8);
+    // vertical dashed divider at used edge
+    ctx.strokeStyle='rgba(255,59,48,0.35)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(usedLpx,sY);ctx.lineTo(usedLpx,indY2+8);ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // ---- Width indicator LEFT ----
+  if(maxPW>0){
+    ctx.strokeStyle='#8e8e93';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(sX-16,sY);ctx.lineTo(sX-16,sY+maxPW*scale);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(sX-21,sY);ctx.lineTo(sX-11,sY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(sX-21,sY+maxPW*scale);ctx.lineTo(sX-11,sY+maxPW*scale);ctx.stroke();
+    ctx.fillStyle='#8e8e93';ctx.font='bold 10px Inter,sans-serif';ctx.textAlign='right';
+    ctx.fillText(`W: ${maxPW.toFixed(0)}`,sX-22,sY+maxPW*scale/2+4);
+    ctx.textAlign='left';
+  }
+}
+
+// ==================== 3D DRAW ====================
+function draw3D(cid,cont,cW,cL,cH){
+  const cv=document.getElementById(`cv_${cid}`);if(!cv)return;
+  cv.width=1200;cv.height=540;cv.style.width='100%';cv.style.background='#1c1c1e';
+  const ctx=cv.getContext('2d');
+
+  const sc=Math.min(750/cL,320/cW,280/cH)*0.62;
+  const sx=sc,sy=sc,sh=sc;
+  const oX=cv.width*0.20, oY=cv.height*0.82;
+
+  function iso(x,y,z){return[oX+(x*sx-y*sy)*0.866, oY-(x*sx+y*sy)*0.5-z*sh];}
+  function face(pts,fill,stroke,a=1){
+    ctx.save();ctx.globalAlpha=a;
+    ctx.beginPath();ctx.moveTo(...pts[0]);
+    for(let k=1;k<pts.length;k++)ctx.lineTo(...pts[k]);
+    ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+    ctx.strokeStyle=stroke;ctx.lineWidth=0.7;ctx.stroke();
+    ctx.restore();
+  }
+  function hex2rgb(h){return{r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)};}
+  function dk(h,f){const{r,g,b}=hex2rgb(h);return`rgb(${~~(r*f)},${~~(g*f)},${~~(b*f)})`;}
+
+  // Ghost container
+  const cl=cL,cw=cW,ch=cH;
+  face([iso(0,0,0),iso(cl,0,0),iso(cl,cw,0),iso(0,cw,0)],'rgba(0,122,255,0.12)','rgba(0,122,255,0.3)');
+  face([iso(0,cw,0),iso(cl,cw,0),iso(cl,cw,ch),iso(0,cw,ch)],'rgba(0,122,255,0.07)','rgba(0,122,255,0.2)');
+  face([iso(0,0,0),iso(0,cw,0),iso(0,cw,ch),iso(0,0,ch)],'rgba(0,122,255,0.09)','rgba(0,122,255,0.2)');
+  face([iso(0,0,ch),iso(cl,0,ch),iso(cl,cw,ch),iso(0,cw,ch)],'rgba(0,122,255,0.05)','rgba(0,122,255,0.15)');
+  face([iso(0,0,0),iso(cl,0,0),iso(cl,0,ch),iso(0,0,ch)],'rgba(0,122,255,0.06)','rgba(0,122,255,0.18)');
+
+  // Cargo boxes, sorted back→front
+  [...cont].sort((a,b)=>(a.px+a.py)-(b.px+b.py)).forEach(p=>{
+    const bh=Math.min(p.h&&p.h>0?p.h:ch,ch);
+    const bx=p.px,by=p.py,bz=0,bl=p.pl,bw=p.pw;
+    const top=dk(p.color,1.2),front=dk(p.color,0.72),right=dk(p.color,0.52),stk=dk(p.color,0.38);
+    face([iso(bx,by,bz+bh),iso(bx+bl,by,bz+bh),iso(bx+bl,by+bw,bz+bh),iso(bx,by+bw,bz+bh)],top,stk);
+    face([iso(bx,by,bz),iso(bx+bl,by,bz),iso(bx+bl,by,bz+bh),iso(bx,by,bz+bh)],front,stk);
+    face([iso(bx+bl,by,bz),iso(bx+bl,by+bw,bz),iso(bx+bl,by+bw,bz+bh),iso(bx+bl,by,bz+bh)],right,stk);
+    const[lx,ly]=iso(bx+bl/2,by+bw/2,bz+bh);
+    ctx.fillStyle='#fff';ctx.font='bold 10px Inter,sans-serif';ctx.textAlign='center';
+    ctx.fillText(`${p.pw}×${p.pl}`,lx,ly);
+    if(p.customer&&p.customer!=='N/A'){ctx.font='9px Inter,sans-serif';ctx.fillText(p.customer.slice(0,8),lx,ly+12);}
+    ctx.textAlign='left';
+  });
+
+  // Axis labels
+  ctx.fillStyle='#636366';ctx.font='11px Inter,sans-serif';ctx.textAlign='center';
+  const[lx,ly]=iso(cl/2,0,0);ctx.fillText(`L: ${cL} cm`,lx,ly+20);
+  const[wx,wy]=iso(0,cw/2,0);ctx.fillText(`W: ${cW} cm`,wx-38,wy+10);
+  const[hx,hy]=iso(0,0,ch/2);ctx.fillText(`H: ${cH} cm`,hx-38,hy);
+  ctx.textAlign='left';
+}
+
+// ==================== SAVE / LOAD / CLEAR ====================
+function saveData(){
+  localStorage.setItem('lcl_v16_c',JSON.stringify(cargos));
+  localStorage.setItem('lcl_v16_n',manualContainers);
+  localStorage.setItem('lcl_v16_m',JSON.stringify(contMeta));
+  showToast('✅ Disimpan!');
+}
+function clearAll(){
+  if(confirm('Hapus semua data?')){cargos=[];manualContainers=1;contMeta={};contView={};renderList();draw();}
+}
+function loadData(){
+  try{const d=localStorage.getItem('lcl_v16_c');if(d)cargos=JSON.parse(d);}catch(e){}
+  try{const m=localStorage.getItem('lcl_v16_n');if(m)manualContainers=parseInt(m)||1;}catch(e){}
+  try{const mt=localStorage.getItem('lcl_v16_m');if(mt)contMeta=JSON.parse(mt);}catch(e){}
+  updateSel();renderList();draw();
+}
+function exportPDF(){window.print();}
+
+// Init
+onPresetChange();
+loadData();
+</script>
+</body>
+</html>
