@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ContainerCalc v15 — Adi Hidayat</title>
+<title>ContainerCalc v16 — Adi Hidayat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -102,7 +102,7 @@ input::placeholder{color:var(--label)}
 
 .metrics-row{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;border:var(--border);box-shadow:var(--shadow)}
 .metric{padding:12px 14px;border-right:var(--border);text-align:center}.metric:last-child{border-right:none}
-.metric-val{font-size:20px;font-weight:700;letter-spacing:-.8px;font-family:var(--mono)}
+.metric-val{font-size:20px;font-weight:800;letter-spacing:-.8px;font-family:var(--mono)}
 .metric-lbl{font-size:8px;color:var(--label);margin-top:2px;text-transform:uppercase;letter-spacing:1px}
 .metric:nth-child(1) .metric-val{color:var(--accent)}.metric:nth-child(2) .metric-val{color:var(--accent2)}
 .metric:nth-child(3) .metric-val{color:var(--warn)}.metric:nth-child(4) .metric-val{color:#2563eb}
@@ -111,7 +111,7 @@ input::placeholder{color:var(--label)}
 .cont-hdr{padding:9px 12px;background:var(--surf2);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-bottom:var(--border)}
 .cont-hdr-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
 .cont-type-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;background:rgba(124,58,237,0.1);color:var(--accent2);border:1px solid rgba(124,58,237,0.2);font-family:var(--mono);letter-spacing:.5px;white-space:nowrap;flex-shrink:0}
-.cont-name-label{font-size:12px;font-weight:800;color:var(--accent);letter-spacing:-.3px;white-space:nowrap;flex-shrink:0;font-family:var(--mono)}
+.cont-name-label{font-size:12px;font-weight:800;color:var(--accent);letter-spacing:-.3px;white-space:nowrap;flex-shrink:0;font-family:var(--mono);display:none}
 .cont-name-in{background:var(--surface);border:1.5px solid var(--sep);color:var(--text);font-family:var(--font);font-size:12px;font-weight:700;padding:3px 8px;border-radius:4px;outline:none;width:120px;transition:border-color .15s}
 .cont-name-in:focus{border-color:var(--accent)}
 .cont-hdr-right{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
@@ -219,7 +219,7 @@ canvas{display:block;touch-action:none;image-rendering:auto}
 </style>
 </head>
 <body>
-<div class="pdf-wm" id="pdfWm">ContainerCalc v15 · Adi Hidayat · 2026</div>
+<div class="pdf-wm" id="pdfWm">ContainerCalc v16 · Adi Hidayat · 2026</div>
 
 <div class="modal-bg" id="modalBg"><div class="modal-sheet">
   <div class="modal-icon" id="modalIcon">⚠️</div>
@@ -261,7 +261,7 @@ canvas{display:block;touch-action:none;image-rendering:auto}
 <div class="app-header">
   <div class="header-logo">📦</div>
   <div class="header-title">ContainerCalc</div>
-  <div class="header-sub">Adi Hidayat · v15</div>
+  <div class="header-sub">Adi Hidayat · v16</div>
   <div class="header-actions">
     <button class="header-btn" id="undoBtn" onclick="undo()" title="Undo (Ctrl+Z)">↩️</button>
     <button class="header-btn" id="redoBtn" onclick="redo()" title="Redo (Ctrl+Y)">↪️</button>
@@ -371,7 +371,7 @@ canvas{display:block;touch-action:none;image-rendering:auto}
 </div>
 
 <script>
-var APP_VERSION='v15';
+var APP_VERSION='v16';
 var COLORS=['#059669','#7c3aed','#dc2626','#d97706','#2563eb','#0891b2','#9333ea','#16a34a','#b45309','#1d4ed8','#db2777','#0f766e'];
 var cargos=[],custColors={},manualContainers=1,contMeta={},contView={},loadMode='stack';
 var editingIdx=-1,inlineEditIdx=-1,canvasStates={},overflowMap={};
@@ -519,7 +519,7 @@ function renderList(){
   }).join('');
 }
 
-/* ── CONTAINERS ── */
+/* CONTAINERS */
 function addManualContainer(){manualContainers++;updateSel();draw();pushHistory();showToast('📦 Container '+manualContainers+' ditambahkan')}
 function deleteContainer(cid){
   showModal('⚠️','Hapus '+contName(cid)+'?','Cargo di container ini ikut terhapus.',[
@@ -542,26 +542,39 @@ function updateSel(){
 }
 function applyName(cid){var inp=document.getElementById('cn_'+cid);if(!inp)return;if(!contMeta[cid])contMeta[cid]={};contMeta[cid].name=inp.value||('Container '+(cid+1));updateSel();draw();pushHistory()}
 
-/* Toggle edit panel */
-  // Populate default container options
-var presetSelect=document.getElementById('preset_'+cid);
-if(presetSelect){
-  var cs=contSize(cid);
-  var options='<option value="">-- Pilih Default --</option>';
-  for(var key in PRESETS){
-    var p=PRESETS[key];
-    options+='<option value="'+key+'" '+(cs.w===p.w&&cs.l===p.l&&cs.h===p.h?'selected':'')+'>'+p.label+' ('+p.l+'×'+p.w+'×'+p.h+')</option>';
-  }
-  presetSelect.innerHTML=options;
-}
 function toggleEditPanel(cid){
   if(activeEditPanel===cid){activeEditPanel=-1;draw();return}
   activeEditPanel=cid;draw();
   setTimeout(function(){
     var panel=document.getElementById('ep_'+cid);if(panel)panel.classList.add('show');
+    var presetSelect=document.getElementById('preset_'+cid);
+    if(presetSelect){
+      var cs=contSize(cid);
+      var options='<option value="">-- Pilih Default --</option>';
+      for(var key in PRESETS){
+        var p=PRESETS[key];
+        options+='<option value="'+key+'" '+(cs.w===p.w&&cs.l===p.l&&cs.h===p.h?'selected':'')+'>'+p.label+' ('+p.l+'×'+p.w+'×'+p.h+')</option>';
+      }
+      presetSelect.innerHTML=options;
+    }
   },30);
 }
 function closeEditPanel(cid){activeEditPanel=-1;draw()}
+function applyPreset(cid){
+  var presetSelect=document.getElementById('preset_'+cid);
+  if(!presetSelect||!presetSelect.value)return;
+  var preset=PRESETS[presetSelect.value];
+  if(!preset)return;
+  var wIn=document.getElementById('ew_'+cid);
+  var lIn=document.getElementById('el_'+cid);
+  var hIn=document.getElementById('eh_'+cid);
+  var mwIn=document.getElementById('emw_'+cid);
+  if(wIn)wIn.value=preset.w;
+  if(lIn)lIn.value=preset.l;
+  if(hIn)hIn.value=preset.h;
+  if(mwIn)mwIn.value=preset.maxWt;
+  showToast('✓ Preset '+preset.label+' dipilih');
+}
 
 function applyContEdit(cid){
   var wIn=document.getElementById('ew_'+cid),lIn=document.getElementById('el_'+cid),hIn=document.getElementById('eh_'+cid),mwIn=document.getElementById('emw_'+cid);
@@ -576,7 +589,7 @@ function applyContEdit(cid){
   activeEditPanel=-1;updateSel();draw();pushHistory();showToast('📐 Ukuran diupdate');
 }
 
-/* ── PACKING ── */
+/* PACKING */
 function maxRectsPack3D(items,cL,cW,cH){
   var freeRects=[{x:0,y:0,z:0,w:cL,h:cW,d:cH}],placed=[],failed=[];
   function overlap(ax,ay,az,aw,ah,ad,bx,by,bz,bw,bh,bd){return ax<bx+bw&&ax+aw>bx&&ay<by+bh&&ay+ah>by&&az<bz+bd&&az+ad>bz}
@@ -614,11 +627,11 @@ function packAll(){
   overflowMap=newOverflow;return result;
 }
 
-/* ── CANVAS ── */
+/* CANVAS */
 function getState(cid){if(!canvasStates[cid])canvasStates[cid]={zoom:1,panX:0,panY:0,rotY:0,dragging:false,lastX:0,lastY:0,pinching:false,lastDist:0};return canvasStates[cid]}
 function setupCanvasInteraction(cv,cid,renderFn){
   var st=getState(cid);
-  cv.addEventListener('wheel',function(e){e.preventDefault();st.zoom=Math.max(0.3,Math.min(5,st.zoom*(e.deltaY>0?0.9:1.1)));renderFn()},{passive:false});
+  cv.addEventListener('wheel',function(e){e.preventDefault();},{passive:false});
   cv.addEventListener('mousedown',function(e){if(e.button===0){st.dragging=true;st.lastX=e.clientX;st.lastY=e.clientY;cv.style.cursor='grabbing'}});
   window.addEventListener('mousemove',function(e){if(!st.dragging)return;st.panX+=e.clientX-st.lastX;st.panY+=e.clientY-st.lastY;st.lastX=e.clientX;st.lastY=e.clientY;renderFn()});
   window.addEventListener('mouseup',function(){if(st.dragging){st.dragging=false;cv.style.cursor='grab'}});
@@ -632,7 +645,7 @@ function resetView(cid){var st=getState(cid);st.zoom=1;st.panX=0;st.panY=0;st.ro
 function rotateView(cid,deg){var st=getState(cid);st.rotY=(st.rotY||0)+deg;redrawCanvas(cid)}
 function setupHiDPICanvas(cv,w,h){var dpr=window.devicePixelRatio||1;cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';var ctx=cv.getContext('2d');ctx.scale(dpr,dpr);return ctx}
 
-/* ── DRAW ── */
+/* DRAW */
 var lastContainers=[];
 function draw(){
   var area=document.getElementById('renderArea');area.innerHTML='';
@@ -645,11 +658,10 @@ function draw(){
     var card=document.createElement('div');card.className='cont-card';
     var pTitle=document.createElement('div');pTitle.className='print-cont-title';pTitle.textContent=nm+' ('+tl+') — '+cL+'×'+cW+'×'+cH+' cm';card.appendChild(pTitle);
     var hdr=document.createElement('div');hdr.className='cont-hdr';
-    hdr.innerHTML='<div class="cont-hdr-left"><span class="cont-type-badge">'+tl+'</span><span class="cont-name-label">'+nm+'</span><input class="cont-name-in" id="cn_'+cid+'" value="'+nm.replace(/"/g,'&quot;')+'" placeholder="Rename..." onchange="applyName('+cid+')"></div><div class="cont-hdr-right"><span class="cont-dim-label">W</span><span class="cont-dim-readonly">'+cW+'</span><span class="cont-dim-label">L</span><span class="cont-dim-readonly">'+cL+'</span><span class="cont-dim-label">H</span><span class="cont-dim-readonly">'+cH+'</span><span class="cont-dim-label" style="color:var(--danger)">Kg</span><span class="cont-wt-readonly">'+maxWt.toLocaleString()+'</span><button class="cont-edit-btn" onclick="toggleEditPanel('+cid+')" title="Edit ukuran">✏️</button>'+(containers.length>1?'<button class="cont-delete-btn" onclick="deleteContainer('+cid+')" title="Hapus">🗑</button>':'')+'</div>';
+    hdr.innerHTML='<div class="cont-hdr-left"><span class="cont-type-badge">'+tl+'</span><div class="cont-hdr-right"><span class="cont-dim-label">W</span><span class="cont-dim-readonly">'+cW+'</span><span class="cont-dim-label">L</span><span class="cont-dim-readonly">'+cL+'</span><span class="cont-dim-label">H</span><span class="cont-dim-readonly">'+cH+'</span><span class="cont-dim-label" style="color:var(--danger)">Kg</span><span class="cont-wt-readonly">'+maxWt.toLocaleString()+'</span><button class="cont-edit-btn" onclick="toggleEditPanel('+cid+')" title="Edit ukuran">✏️</button>'+(containers.length>1?'<button class="cont-delete-btn" onclick="deleteContainer('+cid+')" title="Hapus">🗑</button>':'')+'</div></div>';
     card.appendChild(hdr);
-    /* Edit panel (hidden by default) */
     var ep=document.createElement('div');ep.className='cont-edit-panel';ep.id='ep_'+cid;
-    ep.innerHTML='<span class="cont-dim-label">W</span><input type="number" id="ew_'+cid+'" value="'+cW+'"><span class="cont-dim-label">L</span><input type="number" id="el_'+cid+'" value="'+cL+'"><span class="cont-dim-label">H</span><input type="number" id="eh_'+cid+'" value="'+cH+'"><span class="cont-dim-label" style="color:var(--danger)">MaxKg</span><input type="number" id="emw_'+cid+'" value="'+maxWt+'" style="width:72px"><button class="btn btn-accent btn-sm" onclick="applyContEdit('+cid+')">✓ Apply</button><button class="btn btn-ghost btn-sm" onclick="closeEditPanel('+cid+')">✕</button>';
+    ep.innerHTML='<select id="preset_'+cid+'" onchange="applyPreset('+cid+')" style="width:120px;font-size:11px"></select><span class="cont-dim-label">W</span><input type="number" id="ew_'+cid+'" value="'+cW+'"><span class="cont-dim-label">L</span><input type="number" id="el_'+cid+'" value="'+cL+'"><span class="cont-dim-label">H</span><input type="number" id="eh_'+cid+'" value="'+cH+'"><span class="cont-dim-label" style="color:var(--danger)">MaxKg</span><input type="number" id="emw_'+cid+'" value="'+maxWt+'" style="width:72px"><button class="btn btn-accent btn-sm" onclick="applyContEdit('+cid+')">✓ Apply</button><button class="btn btn-ghost btn-sm" onclick="closeEditPanel('+cid+')">✕</button>';
     card.appendChild(ep);
     if(overflowMap[cid]&&overflowMap[cid].length){var ob=document.createElement('div');var names=[...new Set(overflowMap[cid])].slice(0,3).join(', ')+(overflowMap[cid].length>3?' …':'');ob.className='overflow-badge';ob.textContent='⚠ Overflow: '+names;card.appendChild(ob)}
     var contCargos=cargos.filter(function(c){return c.cid===cid}),contCBM=0,contWt=0;
@@ -698,12 +710,11 @@ function redrawCanvas(cid){if(!lastContainers[cid])return;var c=lastContainers[c
 function updateMetrics(containers){var v=0,wt=0,it=0;for(var i=0;i<cargos.length;i++){v+=cbm(cargos[i]);wt+=((cargos[i].wt||0)*cargos[i].q);it+=cargos[i].q}document.getElementById('mContainers').textContent=containers?containers.length:0;document.getElementById('mVolume').textContent=v.toFixed(2);document.getElementById('mWeight').textContent=wt.toLocaleString();document.getElementById('mItems').textContent=it}
 function setContView(cid,m){if(loadMode==='noStack'&&m==='3d')return;contView[cid]=m;var st=getState(cid);st.zoom=1;st.panX=0;st.panY=0;st.rotY=0;draw()}
 
-/* ── CANVAS HELPERS ── */
+/* CANVAS HELPERS */
 function rrect(ctx,x,y,w,h,r){w=Math.max(w,.1);h=Math.max(h,.1);r=Math.min(Math.max(r,0),w/2,h/2);ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath()}
 function hexRGB(hex){return{r:parseInt(hex.slice(1,3),16),g:parseInt(hex.slice(3,5),16),b:parseInt(hex.slice(5,7),16)}}
 function hexA(hex,a){var c=hexRGB(hex);return'rgba('+c.r+','+c.g+','+c.b+','+a+')'}
 
-/* Helper: draw dimension indicator line (vertical or horizontal) with value */
 function drawDimLine(ctx,x1,y1,x2,y2,text,color,isVertical){
   ctx.save();ctx.strokeStyle=color;ctx.lineWidth=1.8;
   ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
@@ -721,7 +732,6 @@ function drawDimLine(ctx,x1,y1,x2,y2,text,color,isVertical){
   ctx.restore();
 }
 
-/* ── 2D RENDERER ── */
 function draw2D(cid,cont,cW,cL,useState){
   var cv=document.getElementById('cv_'+cid);if(!cv)return;
   var LW=1200,LH=440;
@@ -746,10 +756,8 @@ function draw2D(cid,cont,cW,cL,useState){
     }
   }
   var acc='#059669',red='#dc2626',wX=sX-14;
-  /* WIDTH — LEFT */
   drawDimLine(ctx,wX,sY,wX,sY+maxPW*scale,maxPW.toFixed(0)+' cm',acc,true);
   if(maxPW<cW-1){drawDimLine(ctx,wX,sY+maxPW*scale+2,wX,sY+boxH,(cW-maxPW).toFixed(0)+' cm',red,true)}
-  /* LENGTH — BOTTOM */
   var baseY=sY+boxH,lY1=baseY+20;
   drawDimLine(ctx,sX,lY1,sX+maxPL*scale,lY1,maxPL.toFixed(0)+' cm',acc,false);
   if(maxPL<cL-1){drawDimLine(ctx,sX+maxPL*scale+2,baseY+40,sX+boxW,baseY+40,(cL-maxPL).toFixed(0)+' cm',red,false)}
@@ -757,7 +765,6 @@ function draw2D(cid,cont,cW,cL,useState){
   ctx.restore();ctx.restore();
 }
 
-/* ── 3D RENDERER ── */
 function draw3D(cid,cont,cW,cL,cH,useState){
   var cv=document.getElementById('cv_'+cid);if(!cv)return;
   var LW=1200,LH=660;
@@ -795,15 +802,12 @@ function draw3D(cid,cont,cW,cL,cH,useState){
   for(var i=0;i<cont.length;i++){if(cont[i].px+cont[i].pl>maxPL)maxPL=cont[i].px+cont[i].pl;if(cont[i].py+cont[i].pw>maxPW)maxPW=cont[i].py+cont[i].pw;if(cont[i].pz+cont[i].ph>maxPH)maxPH=cont[i].pz+cont[i].ph}
   var acc='#059669',red='#dc2626';
   ctx.save();ctx.font='600 10px Sora,sans-serif';
-  /* WIDTH — LEFT */
   var bW1=iso(0,0,0),bW2=iso(0,maxPW,0),wx=bW1[0]-20;
   drawDimLine(ctx,wx,bW1[1],wx,bW2[1],maxPW.toFixed(0)+' cm',acc,true);
   if(maxPW<cW-1){var bW3=iso(0,cW,0);drawDimLine(ctx,wx,bW2[1]+2,wx,bW3[1],(cW-maxPW).toFixed(0)+' cm',red,true)}
-  /* LENGTH — BOTTOM */
   var bL1=iso(0,0,0),bL2=iso(maxPL,0,0),ly1=bL1[1]+20;
   drawDimLine(ctx,bL1[0],ly1,bL2[0],ly1,maxPL.toFixed(0)+' cm',acc,false);
   if(maxPL<cL-1){var bL3=iso(cL,0,0),ly2=bL1[1]+40;drawDimLine(ctx,bL2[0]+2,ly2,bL3[0],ly2,(cL-maxPL).toFixed(0)+' cm',red,false)}
-  /* HEIGHT — RIGHT */
   var bH1=iso(cL,0,0),bH2=iso(cL,0,maxPH),hx=bH1[0]+20;
   drawDimLine(ctx,hx,bH1[1],hx,bH2[1],maxPH.toFixed(0)+' cm',acc,true);
   if(maxPH<cH-1){var bH3=iso(cL,0,cH);drawDimLine(ctx,hx,bH2[1]+2,hx,bH3[1],(cH-maxPH).toFixed(0)+' cm',red,true)}
@@ -812,7 +816,6 @@ function draw3D(cid,cont,cW,cL,cH,useState){
   ctx.restore();
 }
 
-/* ── WA REPORT ── */
 function generateWAReport(){
   if(!cargos.length){showModal('⚠️','Tidak Ada Data','Tambahkan cargo terlebih dahulu.');return}
   var title=document.getElementById('waTitle').value.trim()||'LCL REPORT',notes=document.getElementById('waNotes').value.trim();
@@ -821,7 +824,7 @@ function generateWAReport(){
   for(var i=0;i<cargos.length;i++){var c=cargos[i],cid=c.cid;if(!contData[cid]){contData[cid]={customers:[]};cids.push(cid)}if(contData[cid].customers.indexOf(c.customer)<0)contData[cid].customers.push(c.customer)}
   cids.sort(function(a,b){return a-b});
   var lines=[('*'+title.toUpperCase()+'*'),dateStr,''];
-  for(var ci=0;ci<cids.length;ci++){var cid=cids[ci],cd=contData[cid];var custs=cd.customers.filter(function(c){return c&&c!=='N/A'}).sort();lines.push('1×'+contTypeLabel(cid)+' ('+contName(cid)+') → '+custs.join(' + '))}
+  for(var ci=0;ci<cids.length;ci++){var cid=cids[ci],cd=contData[cid];var custs=cd.customers.filter(function(c){return c&&c!=='N/A'}).sort();lines.push('1× Container → '+custs.join(' + '))}
   if(notes){lines.push('');lines.push(notes)}
   var report=lines.join('\n');
   navigator.clipboard.writeText(report).then(function(){showToast('📱 Report di-copy!')}).catch(function(){showModal('📋','Salin Manual','<div style="text-align:left;background:var(--surf2);padding:12px;border-radius:7px;font-family:var(--mono);font-size:11px;white-space:pre-wrap;max-height:280px;overflow-y:auto;line-height:1.7;color:var(--text)">'+report.replace(/</g,'&lt;')+'</div>',[{label:'Tutup',primary:true}])})
@@ -856,7 +859,7 @@ function saveToFile(){
   if(!cargos.length){showModal('⚠️','Tidak Ada Data','Tidak ada cargo untuk disimpan.');return}
   var def='ContainerCalc-'+new Date().toISOString().slice(0,10);
   showModal('💾','Save File','<div style="margin-top:6px"><input id="expFn" type="text" value="'+def+'" style="width:100%;padding:9px;font-size:13px;border-radius:7px;border:1.5px solid var(--sep);background:var(--surf2);font-family:inherit;outline:none;box-sizing:border-box;color:var(--text)"><div style="font-size:10.5px;color:var(--text2);margin-top:4px">Disimpan sebagai .json</div></div>',[
-    {label:'Batal',cancel:true},{label:'💾 Save',primary:true,cb:function(){var fname=(document.getElementById('expFn').value||def).trim();var data={cargos:cargos,manualContainers:manualContainers,contMeta:contMeta,custColors:custColors,loadMode:loadMode,defDims:getDefDims(),defType:document.getElementById('defType').value,containerType:document.getElementById('containerType').value,version:15};var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname.endsWith('.json')?fname:fname+'.json';a.click();URL.revokeObjectURL(a.href);showToast('💾 File disimpan!')}}
+    {label:'Batal',cancel:true},{label:'💾 Save',primary:true,cb:function(){var fname=(document.getElementById('expFn').value||def).trim();var data={cargos:cargos,manualContainers:manualContainers,contMeta:contMeta,custColors:custColors,loadMode:loadMode,defDims:getDefDims(),defType:document.getElementById('defType').value,containerType:document.getElementById('containerType').value,version:16};var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname.endsWith('.json')?fname:fname+'.json';a.click();URL.revokeObjectURL(a.href);showToast('💾 File disimpan!')}}
   ]);setTimeout(function(){var i=document.getElementById('expFn');if(i){i.focus();i.select()}},100);
 }
 function loadFromFile(){document.getElementById('importFileInput').click()}
