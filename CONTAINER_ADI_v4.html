@@ -543,6 +543,17 @@ function updateSel(){
 function applyName(cid){var inp=document.getElementById('cn_'+cid);if(!inp)return;if(!contMeta[cid])contMeta[cid]={};contMeta[cid].name=inp.value||('Container '+(cid+1));updateSel();draw();pushHistory()}
 
 /* Toggle edit panel */
+  // Populate default container options
+var presetSelect=document.getElementById('preset_'+cid);
+if(presetSelect){
+  var cs=contSize(cid);
+  var options='<option value="">-- Pilih Default --</option>';
+  for(var key in PRESETS){
+    var p=PRESETS[key];
+    options+='<option value="'+key+'" '+(cs.w===p.w&&cs.l===p.l&&cs.h===p.h?'selected':'')+'>'+p.label+' ('+p.l+'×'+p.w+'×'+p.h+')</option>';
+  }
+  presetSelect.innerHTML=options;
+}
 function toggleEditPanel(cid){
   if(activeEditPanel===cid){activeEditPanel=-1;draw();return}
   activeEditPanel=cid;draw();
