@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ContainerCalc v17 — Adi Hidayat</title>
+<title>ContainerCalc v17.1 — Adi Hidayat (Optimized)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -146,8 +146,8 @@ canvas{display:block;image-rendering:auto}
 .canvas-hint{position:absolute;top:8px;right:10px;font-size:9px;font-family:var(--mono);color:var(--label);background:var(--surface);padding:3px 8px;border-radius:4px;z-index:10;pointer-events:none;border:var(--border);opacity:.7;white-space:nowrap;transition:opacity 1.5s}
 .canvas-hint.fade{opacity:0}
 
-/* Rotate Popup */
-.rotate-popup{position:absolute;z-index:20;display:none;flex-direction:column;gap:4px;background:var(--surface);border:var(--border);border-radius:8px;padding:6px;box-shadow:var(--shadow-lg);min-width:130px}
+/* Rotate Popup - Fixed Z-Index */
+.rotate-popup{position:absolute;z-index:200;display:none;flex-direction:column;gap:4px;background:var(--surface);border:var(--border);border-radius:8px;padding:6px;box-shadow:var(--shadow-lg);min-width:130px}
 .rotate-popup.show{display:flex}
 .rotate-popup-title{font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;font-family:var(--mono);padding:2px 4px 4px;border-bottom:var(--border);margin-bottom:2px}
 .rotate-popup-btn{height:28px;border:var(--border);border-radius:5px;background:var(--surf2);color:var(--text);font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;padding:0 8px;transition:all .1s;white-space:nowrap}
@@ -277,7 +277,7 @@ canvas{display:block;image-rendering:auto}
 <div class="app-header">
   <div class="header-logo">📦</div>
   <div class="header-title">ContainerCalc</div>
-  <div class="header-sub">Adi Hidayat · v17</div>
+  <div class="header-sub">Adi Hidayat · v17.1</div>
   <div class="header-actions">
     <button class="header-btn" id="undoBtn" onclick="undo()" title="Undo (Ctrl+Z)">↩️</button>
     <button class="header-btn" id="redoBtn" onclick="redo()" title="Redo (Ctrl+Y)">↪️</button>
@@ -393,7 +393,7 @@ canvas{display:block;image-rendering:auto}
 </div>
 
 <script>
-var APP_VERSION='v17';
+var APP_VERSION='v17.1';
 var COLORS=['#059669','#7c3aed','#dc2626','#d97706','#2563eb','#0891b2','#9333ea','#16a34a','#b45309','#1d4ed8','#db2777','#0f766e'];
 var cargos=[],custColors={},loadPriorities={},manualContainers=1,contMeta={},contView={},loadMode='stack';
 var editingIdx=-1,inlineEditIdx=-1,canvasStates={},overflowMap={};
