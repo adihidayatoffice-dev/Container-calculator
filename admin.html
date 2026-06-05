@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - ContainerCalc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #0ea878;
+            --danger: #dc2626;
+            --warn: #d97706;
+            --bg: #f1f5f9;
+            --surface: #fff;
+            --surf2: #f8fafc;
+            --text: #0f172a;
+            --text2: #64748b;
+            --sep: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .admin-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--sep);
+            padding: 20px;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Sora', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--sep);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text2);
+            font-weight: 600;
+            font-family: 'Sora', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--sep);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: var(--surf2);
+            padding: 12px;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 1px solid var(--sep);
+            color: var(--text);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--sep);
+            color: var(--text2);
+        }
+
+        tr:hover {
+            background: var(--surf2);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-approved {
+            background: rgba(14, 168, 120, 0.1);
+            color: var(--accent);
+        }
+
+        .badge-pending {
+            background: rgba(217, 119, 6, 0.1);
+            color: var(--warn);
+        }
+
+        .badge-admin {
+            background: rgba(124, 58, 237, 0.1);
+            color: #7c3aed;
+        }
+
+        .badge-user {
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            margin: 0 4px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Sora', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .btn-approve {
+            background: rgba(14, 168, 120, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(14, 168, 120, 0.3);
+        }
+
+        .btn-approve:hover {
+            background: rgba(14, 168, 120, 0.2);
+        }
+
+        .btn-reject {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-reject:hover {
+            background: rgba(220, 38, 38, 0.2);
+        }
+
+        .btn-makeadmin {
+            background: rgba(124, 58, 237, 0.1);
+            color: #7c3aed;
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-makeadmin:hover {
+            background: rgba(124, 58, 237, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--sep);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: var(--text2);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Sora', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .modal-btn-cancel {
+            background: var(--surf2);
+            color: var(--text);
+        }
+
+        .modal-btn-cancel:hover {
+            background: var(--sep);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <div>
+            <h1 class="admin-title">⚙️ Admin Panel</h1>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()">🔓 Logout</button>
+    </div>
+
+    <div class="admin-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('users', this)">👥 Kelola User</button>
+            <button class="tab-btn" onclick="switchTab('approvals', this)">✅ Persetujuan</button>
+            <button class="tab-btn" onclick="switchTab('activity', this)">📝 Aktivitas</button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Total User</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalAdmins">0</div>
+                    <div class="stat-label">Admin</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingUsers">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeToday">0</div>
+                    <div class="stat-label">Login Hari Ini</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📋 User Terbaru</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Terdaftar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentUsersList">
+                        <tr><td colspan="5" class="empty-state">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div id="users" class="tab-content">
+            <div class="card">
+                <div class="card-title">👥 Semua User</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersList">
+                        <tr><td colspan="5" class="empty-state">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- APPROVALS TAB -->
+        <div id="approvals" class="tab-content">
+            <div class="card">
+                <div class="card-title">✅ Persetujuan Pendaftar</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Terdaftar</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="approvalList">
+                        <tr><td colspan="4" class="empty-state">Tidak ada yang perlu disetujui</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ACTIVITY TAB -->
+        <div id="activity" class="tab-content">
+            <div class="card">
+                <div class="card-title">📝 Aktivitas Terbaru</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Aktivitas</th>
+                            <th>Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityList">
+                        <tr><td colspan="3" class="empty-state">Tidak ada aktivitas</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">Konfirmasi</div>
+            <div class="modal-text" id="modalText"></div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" id="modalConfirmBtn">Ya, Lanjutkan</button>
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+
+    <script>
+        // ⚠️ GANTI DENGAN FIREBASE CONFIG KAMU
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "your-messaging-id",
+            appId: "your-app-id"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+
+        window.addEventListener('load', () => {
+            auth.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    window.location.href = 'index.html';
+                } else {
+                    currentUser = user;
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (!userDoc.exists || userDoc.data().role !== 'admin') {
+                        alert('❌ Anda bukan admin!');
+                        window.location.href = 'app.html';
+                    } else {
+                        loadAllData();
+                    }
+                }
+            });
+        });
+
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        async function loadAllData() {
+            const users = await db.collection('users').get();
+            let stats = { total: 0, admins: 0, pending: 0, activeToday: 0 };
+            let usersList = [];
+            let pendingList = [];
+            let recentList = [];
+
+            users.forEach(doc => {
+                const data = doc.data();
+                const user = { id: doc.id, ...data };
+                stats.total++;
+                usersList.push(user);
+
+                if (data.role === 'admin') stats.admins++;
+                if (!data.approved) {
+                    stats.pending++;
+                    pendingList.push(user);
+                }
+
+                if (data.lastLogin && isToday(data.lastLogin.toDate())) {
+                    stats.activeToday++;
+                }
+
+                recentList.push(user);
+            });
+
+            recentList.sort((a, b) => (b.createdAt?.toDate() || new Date(0)) - (a.createdAt?.toDate() || new Date(0)));
+
+            renderDashboard(stats, recentList.slice(0, 5));
+            renderUsersList(usersList);
+            renderApprovalsList(pendingList);
+        }
+
+        function isToday(date) {
+            const today = new Date();
+            return date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+        }
+
+        function renderDashboard(stats, recent) {
+            document.getElementById('totalUsers').textContent = stats.total;
+            document.getElementById('totalAdmins').textContent = stats.admins;
+            document.getElementById('pendingUsers').textContent = stats.pending;
+            document.getElementById('activeToday').textContent = stats.activeToday;
+
+            const tbody = document.getElementById('recentUsersList');
+            tbody.innerHTML = recent.map(u => `
+                <tr>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}">${u.role}</span></td>
+                    <td><span class="badge ${u.approved ? 'badge-approved' : 'badge-pending'}">${u.approved ? 'Approved' : 'Pending'}</span></td>
+                    <td>${formatDate(u.createdAt)}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" class="empty-state">Tidak ada user</td></tr>';
+        }
+
+        function renderUsersList(users) {
+            const tbody = document.getElementById('usersList');
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}">${u.role}</span></td>
+                    <td><span class="badge ${u.approved ? 'badge-approved' : 'badge-pending'}">${u.approved ? 'Approved' : 'Pending'}</span></td>
+                    <td>
+                        ${u.role !== 'admin' ? `<button class="action-btn btn-makeadmin" onclick="confirmMakeAdmin('${u.id}', '${u.name}')">👑 Admin</button>` : ''}
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" class="empty-state">Tidak ada user</td></tr>';
+        }
+
+        function renderApprovalsList(pending) {
+            const tbody = document.getElementById('approvalList');
+            tbody.innerHTML = pending.map(u => `
+                <tr>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td>${formatDate(u.createdAt)}</td>
+                    <td>
+                        <button class="action-btn btn-approve" onclick="approveUser('${u.id}')">✅ Setujui</button>
+                        <button class="action-btn btn-reject" onclick="rejectUser('${u.id}')">❌ Tolak</button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="4" class="empty-state">Tidak ada yang perlu disetujui</td></tr>';
+        }
+
+        async function approveUser(userId) {
+            try {
+                await db.collection('users').doc(userId).update({ approved: true });
+                await logActivity(currentUser.email, `Approved user`);
+                loadAllData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function rejectUser(userId) {
+            try {
+                await db.collection('users').doc(userId).delete();
+                await logActivity(currentUser.email, `Rejected user`);
+                loadAllData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function confirmMakeAdmin(userId, userName) {
+            document.getElementById('modalTitle').textContent = '👑 Jadikan Admin?';
+            document.getElementById('modalText').textContent = `Jadikan ${userName} sebagai admin? Mereka akan memiliki akses penuh ke panel admin.`;
+            document.getElementById('modalConfirmBtn').onclick = () => makeUserAdmin(userId);
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        async function makeUserAdmin(userId) {
+            try {
+                await db.collection('users').doc(userId).update({ role: 'admin' });
+                await logActivity(currentUser.email, `Made user admin`);
+                closeModal();
+                loadAllData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function logActivity(user, action) {
+            try {
+                await db.collection('activity_logs').add({
+                    user: user,
+                    action: action,
+                    timestamp: new Date()
+                });
+            } catch (error) {
+                console.error('Error logging activity:', error);
+            }
+        }
+
+        function formatDate(firebaseDate) {
+            if (!firebaseDate) return '-';
+            const date = firebaseDate.toDate();
+            return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        async function handleLogout() {
+            await auth.signOut();
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('confirmModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+    </script>
+</body>
+</html>
